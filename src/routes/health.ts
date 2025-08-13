@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { db } from '../db';
+import { checkDatabaseConnection } from '../db/index';
 import { ApiResponse, HealthCheckResult } from '../types/common';
 
 const health = new Hono();
@@ -9,28 +9,18 @@ health.get('/', async (c) => {
 
   try {
     // Check database connectivity
-    await db.execute('SELECT 1');
+    const isDatabaseConnected = await checkDatabaseConnection();
 
     const endTime = Date.now();
     const responseTime = endTime - startTime;
 
     const healthData: HealthCheckResult = {
-      status: 'healthy',
+      status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      responseTime,
-      database: {
-        status: 'connected',
-        responseTime
-      },
-      memory: {
-        used:
-          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /
-          100,
-        total:
-          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /
-          100
-      }
+      database: isDatabaseConnected ? 'connected' : 'disconnected',
+      version: '1.0.0',
+      responseTime
     };
 
     const response: ApiResponse<HealthCheckResult> = {
@@ -45,34 +35,23 @@ health.get('/', async (c) => {
     const responseTime = endTime - startTime;
 
     const healthData: HealthCheckResult = {
-      status: 'unhealthy',
+      status: 'error',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      responseTime,
-      database: {
-        status: 'disconnected',
-        responseTime,
-        error:
-          error instanceof Error ? error.message : 'Database connection failed'
-      },
-      memory: {
-        used:
-          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /
-          100,
-        total:
-          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /
-          100
-      }
+      database: 'disconnected',
+      version: '1.0.0',
+      responseTime
     };
 
     const response: ApiResponse<HealthCheckResult> = {
       success: false,
       message: 'Service is unhealthy',
-      data: healthData
+      data: healthData,
+      errors: [error instanceof Error ? error.message : 'Unknown error']
     };
 
     return c.json(response, 503);
   }
 });
 
-export { health };
+export { health as healthRoutes };

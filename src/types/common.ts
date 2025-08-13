@@ -1,65 +1,81 @@
-// Common types used throughout the application
-
+// Common API response types
 export interface ApiResponse<T = any> {
   success: boolean;
+  message: string;
   data?: T;
-  error?: string;
-  message: string;
-  errors?: { field: string; message: string }[];
-  timestamp?: string;
-  requestId?: string;
+  errors?: string[];
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+  };
 }
 
+// Pagination types
 export interface PaginationParams {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
+  offset?: number;
 }
 
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  pages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  success: boolean;
-  message: string;
-  data: T[];
-  pagination: PaginationMeta;
-  filters?: Record<string, any>;
-}
-
-export interface SearchParams {
-  search?: string;
+export interface SearchParams extends PaginationParams {
+  query?: string;
   category?: string;
   tag?: string;
   author?: string;
-  published?: boolean;
+  status?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  dateFrom?: string;
+  dateTo?: string;
+  featured?: boolean;
+  breaking?: boolean;
 }
 
-export interface DatabaseError extends Error {
-  code?: string;
-  detail?: string;
-  constraint?: string;
+// Service result wrapper
+export interface ServiceResult<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  errors?: string[];
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+  };
 }
 
+// Authentication types
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  nameBn?: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface JWTPayload {
+  userId: string;
+  email: string;
+  role: string;
+  iat?: number;
+  exp?: number;
+}
+
+// Health check types
 export interface HealthCheckResult {
-  status: 'healthy' | 'unhealthy';
+  status: 'ok' | 'error';
   timestamp: string;
   uptime: number;
+  database: 'connected' | 'disconnected';
+  version: string;
   responseTime: number;
-  database: {
-    status: 'connected' | 'disconnected';
-    responseTime: number;
-    error?: string;
-  };
-  memory: {
-    used: number;
-    total: number;
-  };
 }

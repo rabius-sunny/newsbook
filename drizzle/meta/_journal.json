@@ -15,6 +15,13 @@
       "when": 1755103277423,
       "tag": "0001_famous_morlocks",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755109076638,
+      "tag": "0002_melted_madrox",
+      "breakpoints": true
     }
   ]
 }
