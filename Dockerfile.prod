@@ -1,0 +1,53 @@
+FROM oven/bun:1.1.42-alpine AS base
+
+# Install security updates and curl for health checks
+RUN apk --no-cache add curl && \
+    apk --no-cache upgrade
+
+# Dependencies stage
+FROM base AS deps
+WORKDIR /app
+COPY package.json bun.lockb* ./
+RUN bun install --frozen-lockfile --production && \
+    bun install --frozen-lockfile --dev drizzle-kit
+
+# Build stage
+FROM base AS builder
+WORKDIR /app
+COPY package.json bun.lockb* ./
+RUN bun install --frozen-lockfile
+COPY . .
+# Generate migrations and build
+RUN bun run db:generate && \
+    bun run build
+
+# Production stage
+FROM base AS production
+WORKDIR /app
+
+# Create non-root user with proper permissions
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 hono && \
+    mkdir -p /app/logs && \
+    chown -R hono:nodejs /app
+
+# Copy built application with proper ownership
+COPY --from=deps --chown=hono:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=hono:nodejs /app/dist ./dist
+COPY --from=builder --chown=hono:nodejs /app/package.json ./
+COPY --from=builder --chown=hono:nodejs /app/drizzle ./drizzle
+COPY --from=builder --chown=hono:nodejs /app/src/db/migrate.ts ./src/db/migrate.ts
+COPY --from=builder --chown=hono:nodejs /app/src/db/index.ts ./src/db/index.ts
+
+# Switch to non-root user
+USER hono
+
+# Expose port
+EXPOSE 3000
+
+# Health check with better configuration
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Start the application
+CMD ["bun", "run", "start"]
