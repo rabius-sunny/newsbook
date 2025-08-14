@@ -1,0 +1,767 @@
+{
+  "info": {
+    "name": "Bengali News Paper API",
+    "description": "Traditional Bengali newspaper backend API similar to Prothom Alo with full CRUD operations for articles, categories, comments, and metrics.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiUrl",
+      "value": "{{baseUrl}}/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Root & Health",
+      "item": [
+        {
+          "name": "Root Welcome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Get welcome message and API overview"
+          },
+          "response": []
+        },
+        {
+          "name": "API Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/",
+              "host": ["{{apiUrl}}"],
+              "path": [""]
+            },
+            "description": "Get API information and available endpoints"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/health",
+              "host": ["{{apiUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Check API and database health status"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Articles",
+      "item": [
+        {
+          "name": "Get All Articles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/articles?page=1&limit=10&sortBy=publishedAt&sortOrder=desc",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10)"
+                },
+                {
+                  "key": "q",
+                  "value": "",
+                  "description": "Search query",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Filter by category ID",
+                  "disabled": true
+                },
+                {
+                  "key": "author",
+                  "value": "",
+                  "description": "Filter by author ID",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status (draft, review, published, archived)",
+                  "disabled": true
+                },
+                {
+                  "key": "published",
+                  "value": "",
+                  "description": "Filter by published status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "featured",
+                  "value": "",
+                  "description": "Filter by featured status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "breaking",
+                  "value": "",
+                  "description": "Filter by breaking news status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "publishedAt",
+                  "description": "Sort field (publishedAt, createdAt, viewCount, etc.)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort order (asc/desc)"
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "",
+                  "description": "Filter from date (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "dateTo",
+                  "value": "",
+                  "description": "Filter to date (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "tags",
+                  "value": "",
+                  "description": "Filter by tags (comma-separated)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve articles with pagination and filtering options"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Featured Articles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/articles/featured?limit=5",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles", "featured"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of featured articles to return (default: 5)"
+                }
+              ]
+            },
+            "description": "Get featured articles for homepage"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Breaking News",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/articles/breaking?limit=3",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles", "breaking"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "3",
+                  "description": "Number of breaking news articles to return (default: 3)"
+                }
+              ]
+            },
+            "description": "Get breaking news articles"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Article by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/articles/sample-article-slug",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles", "sample-article-slug"]
+            },
+            "description": "Get a specific article by its slug (also increments view count)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Article",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"বাংলাদেশের অর্থনৈতিক অগ্রগতি\",\n  \"titleBn\": \"বাংলাদেশের অর্থনৈতিক অগ্রগতি\",\n  \"slug\": \"bangladesh-economic-progress\",\n  \"excerpt\": \"বাংলাদেশের অর্থনীতিতে উল্লেখযোগ্য অগ্রগতি\",\n  \"excerptBn\": \"বাংলাদেশের অর্থনীতিতে উল্লেখযোগ্য অগ্রগতি\",\n  \"content\": \"বাংলাদেশের অর্থনীতি গত কয়েক বছরে অভূতপূর্ব অগ্রগতি লাভ করেছে। এই অগ্রগতির পেছনে রয়েছে বিভিন্ন কারণ...\",\n  \"contentBn\": \"বাংলাদেশের অর্থনীতি গত কয়েক বছরে অভূতপূর্ব অগ্রগতি লাভ করেছে। এই অগ্রগতির পেছনে রয়েছে বিভিন্ন কারণ...\",\n  \"featuredImage\": \"https://example.com/images/economy.jpg\",\n  \"imageCaption\": \"Bangladesh's economic growth\",\n  \"imageCaptionBn\": \"বাংলাদেশের অর্থনৈতিক উন্নতি\",\n  \"categoryId\": \"uuid-category-id\",\n  \"authorId\": \"uuid-author-id\",\n  \"status\": \"draft\",\n  \"isPublished\": false,\n  \"isFeatured\": false,\n  \"isBreaking\": false,\n  \"isUrgent\": false,\n  \"priority\": 5,\n  \"location\": \"Dhaka\",\n  \"locationBn\": \"ঢাকা\",\n  \"source\": \"BSS\",\n  \"metaTitle\": \"Bangladesh Economic Progress - Latest News\",\n  \"metaDescription\": \"Latest updates on Bangladesh's economic progress and growth statistics\",\n  \"keywords\": \"bangladesh, economy, growth, development\",\n  \"gallery\": [\n    {\n      \"url\": \"https://example.com/gallery/1.jpg\",\n      \"caption\": \"Economic indicators\",\n      \"captionBn\": \"অর্থনৈতিক সূচক\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/articles",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles"]
+            },
+            "description": "Create a new article with Bengali content support"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Article",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"বাংলাদেশের অর্থনৈতিক অগ্রগতি - আপডেট\",\n  \"status\": \"published\",\n  \"isPublished\": true,\n  \"publishedAt\": \"2025-08-14T10:00:00Z\",\n  \"isFeatured\": true,\n  \"priority\": 8\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/articles/uuid-article-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles", "uuid-article-id"]
+            },
+            "description": "Update an existing article"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Article",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/articles/uuid-article-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["articles", "uuid-article-id"]
+            },
+            "description": "Delete an article by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Get all categories with hierarchical structure"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Categories with Article Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/with-count",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "with-count"]
+            },
+            "description": "Get categories with article count for each category"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Popular Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/popular?limit=5",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "popular"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of popular categories to return (default: 5)"
+                }
+              ]
+            },
+            "description": "Get most popular categories based on article count and views"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/politics",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "politics"]
+            },
+            "description": "Get a specific category by its slug"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Articles by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/politics/articles?page=1&limit=10&sortBy=publishedAt&sortOrder=desc",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "politics", "articles"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10)"
+                },
+                {
+                  "key": "q",
+                  "value": "",
+                  "description": "Search query within category",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "publishedAt",
+                  "description": "Sort field"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort order (asc/desc)"
+                }
+              ]
+            },
+            "description": "Get articles belonging to a specific category"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"রাজনীতি\",\n  \"nameEn\": \"Politics\",\n  \"slug\": \"politics\",\n  \"description\": \"রাজনৈতিক সংবাদ ও বিশ্লেষণ\",\n  \"parentId\": null,\n  \"displayOrder\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/categories",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Create a new category"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"রাজনীতি ও সরকার\",\n  \"description\": \"রাজনৈতিক সংবাদ, সরকারি নীতি ও বিশ্লেষণ\",\n  \"displayOrder\": 2,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/categories/uuid-category-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "uuid-category-id"]
+            },
+            "description": "Update an existing category"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/uuid-category-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["categories", "uuid-category-id"]
+            },
+            "description": "Delete a category by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Get All Comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/comments?page=1&limit=20&sortBy=createdAt&sortOrder=desc",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20)"
+                },
+                {
+                  "key": "articleId",
+                  "value": "",
+                  "description": "Filter by article ID",
+                  "disabled": true
+                },
+                {
+                  "key": "approved",
+                  "value": "",
+                  "description": "Filter by approval status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "reported",
+                  "value": "",
+                  "description": "Filter by reported status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort order (asc/desc)"
+                }
+              ]
+            },
+            "description": "Get all comments with filtering and pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/comments/pending?limit=50",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "pending"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Number of pending comments to return (default: 50)"
+                }
+              ]
+            },
+            "description": "Get comments waiting for moderation approval"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"uuid-article-id\",\n  \"parentId\": null,\n  \"authorName\": \"রহিম উদ্দিন\",\n  \"authorEmail\": \"rahim@example.com\",\n  \"content\": \"এটি একটি দুর্দান্ত নিবন্ধ। অনেক তথ্যবহুল।\",\n  \"contentBn\": \"এটি একটি দুর্দান্ত নিবন্ধ। অনেক তথ্যবহুল।\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/comments",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments"]
+            },
+            "description": "Create a new comment (IP address and user agent are automatically captured)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Reply Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"uuid-article-id\",\n  \"parentId\": \"uuid-parent-comment-id\",\n  \"authorName\": \"করিম আলী\",\n  \"authorEmail\": \"karim@example.com\",\n  \"content\": \"আমি আপনার মতামতের সাথে একমত।\",\n  \"contentBn\": \"আমি আপনার মতামতের সাথে একমত।\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/comments",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments"]
+            },
+            "description": "Create a reply to an existing comment"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"এটি একটি দুর্দান্ত নিবন্ধ। অনেক তথ্যবহুল এবং সময়োপযোগী।\",\n  \"contentBn\": \"এটি একটি দুর্দান্ত নিবন্ধ। অনেক তথ্যবহুল এবং সময়োপযোগী।\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/comments/uuid-comment-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "uuid-comment-id"]
+            },
+            "description": "Update an existing comment"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/comments/uuid-comment-id",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "uuid-comment-id"]
+            },
+            "description": "Delete a comment by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Moderate Comment (Approve)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"approve\",\n  \"moderatorId\": \"uuid-moderator-id\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/comments/uuid-comment-id/moderate",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "uuid-comment-id", "moderate"]
+            },
+            "description": "Approve a comment for publication"
+          },
+          "response": []
+        },
+        {
+          "name": "Moderate Comment (Reject)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"reject\",\n  \"moderatorId\": \"uuid-moderator-id\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/comments/uuid-comment-id/moderate",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "uuid-comment-id", "moderate"]
+            },
+            "description": "Reject a comment from being published"
+          },
+          "response": []
+        },
+        {
+          "name": "Report Comment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/comments/uuid-comment-id/report",
+              "host": ["{{apiUrl}}"],
+              "path": ["comments", "uuid-comment-id", "report"]
+            },
+            "description": "Report a comment as inappropriate"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics & Analytics",
+      "item": [
+        {
+          "name": "System Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/metrics",
+              "host": ["{{apiUrl}}"],
+              "path": ["metrics"]
+            },
+            "description": "Get system performance metrics, memory usage, and database stats"
+          },
+          "response": []
+        },
+        {
+          "name": "Slow Queries (Production Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/metrics/slow-queries",
+              "host": ["{{apiUrl}}"],
+              "path": ["metrics", "slow-queries"]
+            },
+            "description": "Get slow query statistics (only available in production environment)"
+          },
+          "response": []
+        },
+        {
+          "name": "Table Sizes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/metrics/table-sizes",
+              "host": ["{{apiUrl}}"],
+              "path": ["metrics", "table-sizes"]
+            },
+            "description": "Get database table sizes and storage information"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set dynamic timestamp for requests",
+          "pm.globals.set('timestamp', new Date().toISOString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test to check response time",
+          "pm.test('Response time is less than 2000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// Global test to check if response is JSON",
+          "pm.test('Response is JSON', function () {",
+          "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "});",
+          "",
+          "// Global test to check response structure",
+          "if (pm.response.code === 200) {",
+          "    pm.test('Response has success field', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.have.property('success');",
+          "        pm.expect(jsonData).to.have.property('message');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "auth": {
+    "type": "noauth"
+  }
+}
