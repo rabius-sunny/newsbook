@@ -80,7 +80,7 @@ export class UserService {
         .from(users);
 
       if (conditions.length > 0) {
-        baseQuery = baseQuery.where(and(...conditions));
+        baseQuery = (baseQuery as any).where(and(...conditions));
       }
 
       const usersData = await baseQuery
@@ -92,7 +92,7 @@ export class UserService {
       let countQuery = db.select({ count: count() }).from(users);
 
       if (conditions.length > 0) {
-        countQuery = countQuery.where(and(...conditions));
+        countQuery = (countQuery as any).where(and(...conditions));
       }
 
       const [{ count: totalCount }] = await countQuery;

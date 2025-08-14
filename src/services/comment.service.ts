@@ -95,7 +95,7 @@ export class CommentService {
         .leftJoin(users, eq(comments.moderatedBy, users.id));
 
       if (conditions.length > 0) {
-        baseQuery = baseQuery.where(and(...conditions));
+        baseQuery = (baseQuery as any).where(and(...conditions));
       }
 
       const commentsData = await baseQuery
@@ -107,54 +107,58 @@ export class CommentService {
       let countQuery = db.select({ count: count() }).from(comments);
 
       if (conditions.length > 0) {
-        countQuery = countQuery.where(and(...conditions));
+        countQuery = (countQuery as any).where(and(...conditions));
       }
 
       const [{ count: totalCount }] = await countQuery;
 
       // Format comments with relations
       const formattedComments: CommentWithRelations[] = commentsData.map(
-        (comment) => ({
-          id: comment.id,
-          articleId: comment.articleId,
-          parentId: comment.parentId,
-          authorName: comment.authorName,
-          authorEmail: comment.authorEmail,
-          authorAvatar: comment.authorAvatar,
-          content: comment.content,
-          contentBn: comment.contentBn,
-          isApproved: comment.isApproved,
-          isReported: comment.isReported,
-          moderatedBy: comment.moderatedBy,
-          moderatedAt: comment.moderatedAt,
-          likeCount: comment.likeCount,
-          replyCount: comment.replyCount,
-          ipAddress: comment.ipAddress,
-          userAgent: comment.userAgent,
-          createdAt: comment.createdAt,
-          updatedAt: comment.updatedAt,
-          article: comment.articleId
-            ? {
-                id: comment.articleId,
-                title: comment.articleTitle || '',
-                titleBn: comment.articleTitleBn || '',
-                slug: comment.articleSlug || ''
-              }
-            : null,
-          moderator: comment.moderatedBy
-            ? {
-                id: comment.moderatedBy,
-                email: '', // Not selected for privacy
-                name: comment.moderatorName || '',
-                nameBn: comment.moderatorNameBn || null,
-                bio: null,
-                bioBn: null,
-                avatar: null,
-                role: '',
-                createdAt: null
-              }
-            : null
-        })
+        (comment) => {
+          const obj: any = {
+            id: comment.id,
+            articleId: comment.articleId,
+            parentId: comment.parentId,
+            authorName: comment.authorName,
+            authorEmail: comment.authorEmail,
+            authorAvatar: comment.authorAvatar,
+            content: comment.content,
+            contentBn: comment.contentBn,
+            isApproved: comment.isApproved,
+            isReported: comment.isReported,
+            moderatedBy: comment.moderatedBy,
+            moderatedAt: comment.moderatedAt,
+            likeCount: comment.likeCount,
+            replyCount: comment.replyCount,
+            ipAddress: comment.ipAddress,
+            userAgent: comment.userAgent,
+            createdAt: comment.createdAt,
+            updatedAt: comment.updatedAt,
+            article: comment.articleId
+              ? {
+                  id: comment.articleId,
+                  title: comment.articleTitle || '',
+                  titleBn: comment.articleTitleBn || '',
+                  slug: comment.articleSlug || ''
+                }
+              : null,
+            moderator: comment.moderatedBy
+              ? {
+                  id: comment.moderatedBy,
+                  email: '', // Not selected for privacy
+                  name: comment.moderatorName || '',
+                  nameBn: comment.moderatorNameBn || null,
+                  bio: null,
+                  bioBn: null,
+                  avatar: null,
+                  role: '',
+                  createdAt: null
+                }
+              : null
+          };
+
+          return obj as CommentWithRelations;
+        }
       );
 
       const totalPages = Math.ceil(totalCount / limit);
@@ -252,12 +256,14 @@ export class CommentService {
 
       // Add parent comments
       parentComments.forEach((comment) => {
-        commentMap.set(comment.id, {
-          ...comment,
+        const obj: CommentWithRelations = {
+          ...(comment as any),
           article: null,
           moderator: null,
           replies: []
-        });
+        };
+
+        commentMap.set(comment.id, obj);
       });
 
       // Add replies
@@ -265,11 +271,14 @@ export class CommentService {
         if (reply.parentId && commentMap.has(reply.parentId)) {
           const parent = commentMap.get(reply.parentId)!;
           if (!parent.replies) parent.replies = [];
-          parent.replies.push({
-            ...reply,
+
+          const replyObj: CommentWithRelations = {
+            ...(reply as any),
             article: null,
             moderator: null
-          });
+          };
+
+          parent.replies.push(replyObj);
         }
       });
 

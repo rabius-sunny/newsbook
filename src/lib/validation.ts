@@ -31,50 +31,52 @@ export const validateInput = (
 
     // Type validation
     if (rule.type) {
-      switch (rule.type) {
-        case 'string':
-          if (typeof value !== 'string') {
-            errors.push({
-              field: rule.field,
-              message: `${rule.field} must be a string`
-            });
-          }
-          break;
-        case 'number':
-          if (typeof value !== 'number' && !Number.isInteger(Number(value))) {
-            errors.push({
-              field: rule.field,
-              message: `${rule.field} must be a number`
-            });
-          }
-          break;
-        case 'boolean':
-          if (typeof value !== 'boolean') {
-            errors.push({
-              field: rule.field,
-              message: `${rule.field} must be a boolean`
-            });
-          }
-          break;
-        case 'email':
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) {
-            errors.push({
-              field: rule.field,
-              message: `${rule.field} must be a valid email address`
-            });
-          }
-          break;
-        case 'uuid':
-          const uuidRegex =
-            /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-          if (!uuidRegex.test(value)) {
-            errors.push({
-              field: rule.field,
-              message: `${rule.field} must be a valid UUID`
-            });
-          }
-          break;
+      // Handle special types first to avoid narrow switch typing issues
+      if (rule.type === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          errors.push({
+            field: rule.field,
+            message: `${rule.field} must be a valid email address`
+          });
+        }
+      } else if (rule.type === 'uuid') {
+        const uuidRegex =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          errors.push({
+            field: rule.field,
+            message: `${rule.field} must be a valid UUID`
+          });
+        }
+      } else {
+        switch (rule.type) {
+          case 'string':
+            if (typeof value !== 'string') {
+              errors.push({
+                field: rule.field,
+                message: `${rule.field} must be a string`
+              });
+            }
+            break;
+          case 'number':
+            if (typeof value !== 'number' && !Number.isInteger(Number(value))) {
+              errors.push({
+                field: rule.field,
+                message: `${rule.field} must be a number`
+              });
+            }
+            break;
+          case 'boolean':
+            if (typeof value !== 'boolean') {
+              errors.push({
+                field: rule.field,
+                message: `${rule.field} must be a boolean`
+              });
+            }
+            break;
+          // object/array handled by other validations if needed
+        }
       }
     }
 

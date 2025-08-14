@@ -1,9 +1,11 @@
 // Common API response types
+export type StructuredError = { field: string; message: string } | string;
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
   data?: T;
-  errors?: string[];
+  errors?: Array<StructuredError>;
   meta?: {
     page?: number;
     limit?: number;
@@ -38,7 +40,7 @@ export interface ServiceResult<T = any> {
   success: boolean;
   message: string;
   data?: T;
-  errors?: string[];
+  errors?: Array<StructuredError>;
   meta?: {
     page?: number;
     limit?: number;
@@ -79,3 +81,5 @@ export interface HealthCheckResult {
   version: string;
   responseTime: number;
 }
+
+// DatabaseError is exported from './extra'

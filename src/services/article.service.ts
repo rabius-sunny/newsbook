@@ -148,7 +148,7 @@ export class ArticleService {
         .leftJoin(users, eq(articles.authorId, users.id));
 
       if (tagIds && tagIds.length > 0) {
-        baseQuery = baseQuery
+        baseQuery = (baseQuery as any)
           .leftJoin(articleTags, eq(articles.id, articleTags.articleId))
           .leftJoin(tags, eq(articleTags.tagId, tags.id))
           .where(
@@ -159,7 +159,7 @@ export class ArticleService {
           )
           .groupBy(articles.id, categories.id, users.id);
       } else if (conditions.length > 0) {
-        baseQuery = baseQuery.where(and(...conditions));
+        baseQuery = (baseQuery as any).where(and(...conditions));
       }
 
       // Apply sorting
@@ -191,7 +191,7 @@ export class ArticleService {
         .leftJoin(users, eq(articles.authorId, users.id));
 
       if (tagIds && tagIds.length > 0) {
-        countQuery
+        (countQuery as any)
           .leftJoin(articleTags, eq(articles.id, articleTags.articleId))
           .leftJoin(tags, eq(articleTags.tagId, tags.id))
           .where(
@@ -202,7 +202,7 @@ export class ArticleService {
           )
           .groupBy(articles.id);
       } else if (conditions.length > 0) {
-        countQuery.where(and(...conditions));
+        (countQuery as any).where(and(...conditions));
       }
 
       const [{ count: totalCount }] = await countQuery;

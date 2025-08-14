@@ -7,8 +7,8 @@ import config from '../config/app';
 
 // CORS middleware
 export const corsMiddleware = cors({
-  origin: config.cors.origins,
-  credentials: config.cors.credentials,
+  origin: config.cors?.origins || ['http://localhost:3000'],
+  credentials: config.cors?.credentials ?? true,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 });
@@ -39,8 +39,8 @@ class RateLimiter {
     const clientId =
       c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown';
     const now = Date.now();
-    const windowMs = config.rateLimit.windowMs;
-    const maxRequests = config.rateLimit.maxRequests;
+    const windowMs = config.rateLimit?.windowMs ?? 900000;
+    const maxRequests = config.rateLimit?.maxRequests ?? 100;
 
     let clientData = this.requests.get(clientId);
 

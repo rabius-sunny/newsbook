@@ -26,10 +26,10 @@ export const categories = pgTable(
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
   },
-  (table) => ({
-    slugIdx: index('categories_slug_idx').on(table.slug),
-    nameIdx: index('categories_name_idx').on(table.name)
-  })
+  (table) => [
+    index('categories_slug_idx').on(table.slug),
+    index('categories_name_idx').on(table.name)
+  ]
 );
 
 // Users table - for authors, editors, admins
@@ -50,10 +50,10 @@ export const users = pgTable(
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
   },
-  (table) => ({
-    emailIdx: index('users_email_idx').on(table.email),
-    roleIdx: index('users_role_idx').on(table.role)
-  })
+  (table) => [
+    index('users_email_idx').on(table.email),
+    index('users_role_idx').on(table.role)
+  ]
 );
 
 // Tags table - for tagging articles
@@ -69,10 +69,10 @@ export const tags = pgTable(
     isActive: boolean('is_active').default(true),
     createdAt: timestamp('created_at').defaultNow()
   },
-  (table) => ({
-    nameIdx: index('tags_name_idx').on(table.name),
-    slugIdx: index('tags_slug_idx').on(table.slug)
-  })
+  (table) => [
+    index('tags_name_idx').on(table.name),
+    index('tags_slug_idx').on(table.slug)
+  ]
 );
 
 // Articles table - main news articles
@@ -131,19 +131,16 @@ export const articles = pgTable(
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
   },
-  (table) => ({
-    slugIdx: index('articles_slug_idx').on(table.slug),
-    statusIdx: index('articles_status_idx').on(table.status),
-    publishedIdx: index('articles_published_idx').on(
-      table.isPublished,
-      table.publishedAt
-    ),
-    categoryIdx: index('articles_category_idx').on(table.categoryId),
-    authorIdx: index('articles_author_idx').on(table.authorId),
-    featuredIdx: index('articles_featured_idx').on(table.isFeatured),
-    breakingIdx: index('articles_breaking_idx').on(table.isBreaking),
-    createdIdx: index('articles_created_idx').on(table.createdAt)
-  })
+  (table) => [
+    index('articles_slug_idx').on(table.slug),
+    index('articles_status_idx').on(table.status),
+    index('articles_published_idx').on(table.isPublished, table.publishedAt),
+    index('articles_category_idx').on(table.categoryId),
+    index('articles_author_idx').on(table.authorId),
+    index('articles_featured_idx').on(table.isFeatured),
+    index('articles_breaking_idx').on(table.isBreaking),
+    index('articles_created_idx').on(table.createdAt)
+  ]
 );
 
 // Article tags junction table
@@ -157,11 +154,11 @@ export const articleTags = pgTable(
     tagId: uuid('tag_id').references(() => tags.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').defaultNow()
   },
-  (table) => ({
-    articleTagUnique: unique().on(table.articleId, table.tagId),
-    articleIdx: index('article_tags_article_idx').on(table.articleId),
-    tagIdx: index('article_tags_tag_idx').on(table.tagId)
-  })
+  (table) => [
+    unique().on(table.articleId, table.tagId),
+    index('article_tags_article_idx').on(table.articleId),
+    index('article_tags_tag_idx').on(table.tagId)
+  ]
 );
 
 // Comments table - for article comments
@@ -200,12 +197,12 @@ export const comments = pgTable(
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
   },
-  (table) => ({
-    articleIdx: index('comments_article_idx').on(table.articleId),
-    parentIdx: index('comments_parent_idx').on(table.parentId),
-    approvedIdx: index('comments_approved_idx').on(table.isApproved),
-    createdIdx: index('comments_created_idx').on(table.createdAt)
-  })
+  (table) => [
+    index('comments_article_idx').on(table.articleId),
+    index('comments_parent_idx').on(table.parentId),
+    index('comments_approved_idx').on(table.isApproved),
+    index('comments_created_idx').on(table.createdAt)
+  ]
 );
 
 // Newsletter subscriptions
@@ -221,10 +218,10 @@ export const newsletters = pgTable(
     unsubscribedAt: timestamp('unsubscribed_at'),
     createdAt: timestamp('created_at').defaultNow()
   },
-  (table) => ({
-    emailIdx: index('newsletters_email_idx').on(table.email),
-    activeIdx: index('newsletters_active_idx').on(table.isActive)
-  })
+  (table) => [
+    index('newsletters_email_idx').on(table.email),
+    index('newsletters_active_idx').on(table.isActive)
+  ]
 );
 
 // Page views analytics
@@ -244,11 +241,11 @@ export const pageViews = pgTable(
     sessionId: text('session_id'),
     viewedAt: timestamp('viewed_at').defaultNow()
   },
-  (table) => ({
-    articleIdx: index('page_views_article_idx').on(table.articleId),
-    dateIdx: index('page_views_date_idx').on(table.viewedAt),
-    sessionIdx: index('page_views_session_idx').on(table.sessionId)
-  })
+  (table) => [
+    index('page_views_article_idx').on(table.articleId),
+    index('page_views_date_idx').on(table.viewedAt),
+    index('page_views_session_idx').on(table.sessionId)
+  ]
 );
 
 // Advertisement placements
@@ -268,11 +265,11 @@ export const advertisements = pgTable(
     endDate: timestamp('end_date'),
     createdAt: timestamp('created_at').defaultNow()
   },
-  (table) => ({
-    positionIdx: index('ads_position_idx').on(table.position),
-    activeIdx: index('ads_active_idx').on(table.isActive),
-    dateIdx: index('ads_date_idx').on(table.startDate, table.endDate)
-  })
+  (table) => [
+    index('ads_position_idx').on(table.position),
+    index('ads_active_idx').on(table.isActive),
+    index('ads_date_idx').on(table.startDate, table.endDate)
+  ]
 );
 
 // Define relations

@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { ApiResponse, DatabaseError } from '../types/common';
+import { ApiResponse } from '../types/common';
 
 export class AppError extends Error {
   public statusCode: number;
