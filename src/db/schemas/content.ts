@@ -30,7 +30,6 @@ export const articles = pgTable(
     // Metadata
     categoryId: integer('category_id').references(() => categories.id),
     authorId: integer('author_id').references(() => users.id),
-    editorId: integer('editor_id').references(() => users.id), // Who edited/approved
 
     // Publication status
     status: text('status').notNull().default('draft'), // draft, review, published, archived
@@ -44,18 +43,15 @@ export const articles = pgTable(
     keywords: text('keywords'), // Comma separated
     viewCount: integer('view_count').default(0),
     likeCount: integer('like_count').default(0),
-    shareCount: integer('share_count').default(0),
     commentCount: integer('comment_count').default(0),
 
     // Priority and placement
     isFeatured: boolean('is_featured').default(false), // For homepage highlight
     isBreaking: boolean('is_breaking').default(false), // Breaking news
-    isUrgent: boolean('is_urgent').default(false), // Urgent news ticker
     priority: integer('priority').default(5), // 1-10, higher = more important
 
     // Location and source
     location: text('location'), // Where the news happened
-    locationBn: text('location_bn'),
     source: text('source'), // News source/agency
 
     // Timestamps

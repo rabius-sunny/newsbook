@@ -76,14 +76,11 @@ export interface ArticleListItem {
   publishedAt: Date | null;
   isFeatured: boolean | null;
   isBreaking: boolean | null;
-  isUrgent: boolean | null;
   priority: number | null;
   viewCount: number | null;
   likeCount: number | null;
-  shareCount: number | null;
   commentCount: number | null;
   location?: string | null;
-  locationBn?: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   category?: {

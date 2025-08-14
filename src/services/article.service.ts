@@ -119,14 +119,11 @@ export class ArticleService {
           publishedAt: articles.publishedAt,
           isFeatured: articles.isFeatured,
           isBreaking: articles.isBreaking,
-          isUrgent: articles.isUrgent,
           priority: articles.priority,
           viewCount: articles.viewCount,
           likeCount: articles.likeCount,
-          shareCount: articles.shareCount,
           commentCount: articles.commentCount,
           location: articles.location,
-          locationBn: articles.locationBn,
           createdAt: articles.createdAt,
           updatedAt: articles.updatedAt,
           // Category
@@ -231,14 +228,11 @@ export class ArticleService {
           publishedAt: article.publishedAt,
           isFeatured: article.isFeatured,
           isBreaking: article.isBreaking,
-          isUrgent: article.isUrgent,
           priority: article.priority,
           viewCount: article.viewCount,
           likeCount: article.likeCount,
-          shareCount: article.shareCount,
           commentCount: article.commentCount,
           location: article.location,
-          locationBn: article.locationBn,
           createdAt: article.createdAt,
           updatedAt: article.updatedAt,
           category: article.categoryId
@@ -332,22 +326,6 @@ export class ArticleService {
             .limit(1)
         : [null];
 
-      const [editor] = article.editorId
-        ? await db
-            .select({
-              id: users.id,
-              email: users.email,
-              name: users.name,
-              bio: users.bio,
-              avatar: users.avatar,
-              role: users.role,
-              createdAt: users.createdAt
-            })
-            .from(users)
-            .where(eq(users.id, article.editorId))
-            .limit(1)
-        : [null];
-
       // Get tags
       const articleTagsData = await db
         .select({
@@ -365,15 +343,12 @@ export class ArticleService {
       const [{ count: commentsCount }] = await db
         .select({ count: count() })
         .from(comments)
-        .where(
-          and(eq(comments.articleId, article.id), eq(comments.isApproved, true))
-        );
+        .where(and(eq(comments.articleId, article.id)));
 
       const articleWithRelations: ArticleWithRelations = {
         ...article,
         category: category || null,
         author: author || null,
-        editor: editor || null,
         tags: articleTagsData
           .filter((tag) => tag.id)
           .map((tag) => ({

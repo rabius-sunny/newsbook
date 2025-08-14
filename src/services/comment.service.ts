@@ -26,8 +26,6 @@ export class CommentService {
         page = 1,
         limit = 20,
         articleId,
-        isApproved,
-        isReported,
         sortBy = 'createdAt',
         sortOrder = 'desc'
       } = params;
@@ -41,21 +39,9 @@ export class CommentService {
         conditions.push(eq(comments.articleId, articleId));
       }
 
-      if (typeof isApproved === 'boolean') {
-        conditions.push(eq(comments.isApproved, isApproved));
-      }
-
-      if (typeof isReported === 'boolean') {
-        conditions.push(eq(comments.isReported, isReported));
-      }
-
       // Apply sorting
       const orderColumn =
-        sortBy === 'likeCount'
-          ? comments.likeCount
-          : sortBy === 'replyCount'
-          ? comments.replyCount
-          : comments.createdAt;
+        sortBy === 'likeCount' ? comments.likeCount : comments.createdAt;
 
       const orderDirection =
         sortOrder === 'asc' ? asc(orderColumn) : desc(orderColumn);
@@ -66,18 +52,11 @@ export class CommentService {
           // Comment fields
           id: comments.id,
           articleId: comments.articleId,
-          parentId: comments.parentId,
           authorName: comments.authorName,
           authorEmail: comments.authorEmail,
           authorAvatar: comments.authorAvatar,
           content: comments.content,
-          contentBn: comments.contentBn,
-          isApproved: comments.isApproved,
-          isReported: comments.isReported,
-          moderatedBy: comments.moderatedBy,
-          moderatedAt: comments.moderatedAt,
           likeCount: comments.likeCount,
-          replyCount: comments.replyCount,
           ipAddress: comments.ipAddress,
           userAgent: comments.userAgent,
           createdAt: comments.createdAt,
@@ -89,8 +68,7 @@ export class CommentService {
           moderatorName: users.name
         })
         .from(comments)
-        .leftJoin(articles, eq(comments.articleId, articles.id))
-        .leftJoin(users, eq(comments.moderatedBy, users.id));
+        .leftJoin(articles, eq(comments.articleId, articles.id));
 
       if (conditions.length > 0) {
         baseQuery = (baseQuery as any).where(and(...conditions));
@@ -116,18 +94,10 @@ export class CommentService {
           const obj: any = {
             id: comment.id,
             articleId: comment.articleId,
-            parentId: comment.parentId,
             authorName: comment.authorName,
             authorEmail: comment.authorEmail,
             authorAvatar: comment.authorAvatar,
-            content: comment.content,
-            contentBn: comment.contentBn,
-            isApproved: comment.isApproved,
-            isReported: comment.isReported,
-            moderatedBy: comment.moderatedBy,
-            moderatedAt: comment.moderatedAt,
             likeCount: comment.likeCount,
-            replyCount: comment.replyCount,
             ipAddress: comment.ipAddress,
             userAgent: comment.userAgent,
             createdAt: comment.createdAt,
@@ -137,18 +107,6 @@ export class CommentService {
                   id: comment.articleId,
                   title: comment.articleTitle || '',
                   slug: comment.articleSlug || ''
-                }
-              : null,
-            moderator: comment.moderatedBy
-              ? {
-                  id: comment.moderatedBy,
-                  email: '', // Not selected for privacy
-                  name: comment.moderatorName || '',
-                  bio: null,
-                  bioBn: null,
-                  avatar: null,
-                  role: '',
-                  createdAt: null
                 }
               : null
           };
@@ -202,31 +160,18 @@ export class CommentService {
         .select({
           id: comments.id,
           articleId: comments.articleId,
-          parentId: comments.parentId,
           authorName: comments.authorName,
           authorEmail: comments.authorEmail,
           authorAvatar: comments.authorAvatar,
           content: comments.content,
-          contentBn: comments.contentBn,
-          isApproved: comments.isApproved,
-          isReported: comments.isReported,
-          moderatedBy: comments.moderatedBy,
-          moderatedAt: comments.moderatedAt,
           likeCount: comments.likeCount,
-          replyCount: comments.replyCount,
           ipAddress: comments.ipAddress,
           userAgent: comments.userAgent,
           createdAt: comments.createdAt,
           updatedAt: comments.updatedAt
         })
         .from(comments)
-        .where(
-          and(
-            eq(comments.articleId, articleId),
-            eq(comments.isApproved, true),
-            isNull(comments.parentId)
-          )
-        )
+        .where(and(eq(comments.articleId, articleId)))
         .orderBy(desc(comments.createdAt))
         .limit(limit)
         .offset(offset);
@@ -238,12 +183,7 @@ export class CommentService {
           ? await db
               .select()
               .from(comments)
-              .where(
-                and(
-                  eq(comments.isApproved, true),
-                  eq(comments.articleId, articleId)
-                )
-              )
+              .where(and(eq(comments.articleId, articleId)))
               .orderBy(asc(comments.createdAt))
           : [];
 
@@ -255,28 +195,13 @@ export class CommentService {
         const obj: CommentWithRelations = {
           ...(comment as any),
           article: null,
-          moderator: null,
-          replies: []
+          moderator: null
         };
 
         commentMap.set(comment.id, obj);
       });
 
       // Add replies
-      replies.forEach((reply) => {
-        if (reply.parentId && commentMap.has(reply.parentId)) {
-          const parent = commentMap.get(reply.parentId)!;
-          if (!parent.replies) parent.replies = [];
-
-          const replyObj: CommentWithRelations = {
-            ...(reply as any),
-            article: null,
-            moderator: null
-          };
-
-          parent.replies.push(replyObj);
-        }
-      });
 
       const formattedComments = Array.from(commentMap.values());
 
@@ -284,13 +209,7 @@ export class CommentService {
       const [{ count: totalCount }] = await db
         .select({ count: count() })
         .from(comments)
-        .where(
-          and(
-            eq(comments.articleId, articleId),
-            eq(comments.isApproved, true),
-            isNull(comments.parentId)
-          )
-        );
+        .where(and(eq(comments.articleId, articleId)));
 
       const totalPages = Math.ceil(totalCount / limit);
 
@@ -395,109 +314,6 @@ export class CommentService {
       return {
         success: false,
         message: 'Failed to delete comment',
-        errors: [error instanceof Error ? error.message : 'Unknown error']
-      };
-    }
-  }
-
-  // Moderate comment (approve/reject)
-  async moderateComment(
-    id: number,
-    action: 'approve' | 'reject',
-    moderatorId: number
-  ): Promise<ServiceResult<Comment>> {
-    try {
-      const [moderatedComment] = await db
-        .update(comments)
-        .set({
-          isApproved: action === 'approve',
-          moderatedBy: moderatorId,
-          moderatedAt: new Date(),
-          updatedAt: new Date()
-        })
-        .where(eq(comments.id, id))
-        .returning();
-
-      if (!moderatedComment) {
-        return {
-          success: false,
-          message: 'Comment not found',
-          errors: ['Comment with this ID does not exist']
-        };
-      }
-
-      return {
-        success: true,
-        message: `Comment ${action}d successfully`,
-        data: moderatedComment
-      };
-    } catch (error) {
-      console.error('Error moderating comment:', error);
-      return {
-        success: false,
-        message: 'Failed to moderate comment',
-        errors: [error instanceof Error ? error.message : 'Unknown error']
-      };
-    }
-  }
-
-  // Report comment
-  async reportComment(id: number): Promise<ServiceResult<Comment>> {
-    try {
-      const [reportedComment] = await db
-        .update(comments)
-        .set({
-          isReported: true,
-          updatedAt: new Date()
-        })
-        .where(eq(comments.id, id))
-        .returning();
-
-      if (!reportedComment) {
-        return {
-          success: false,
-          message: 'Comment not found',
-          errors: ['Comment with this ID does not exist']
-        };
-      }
-
-      return {
-        success: true,
-        message: 'Comment reported successfully',
-        data: reportedComment
-      };
-    } catch (error) {
-      console.error('Error reporting comment:', error);
-      return {
-        success: false,
-        message: 'Failed to report comment',
-        errors: [error instanceof Error ? error.message : 'Unknown error']
-      };
-    }
-  }
-
-  // Get pending comments for moderation
-  async getPendingComments(
-    limit: number = 50
-  ): Promise<ServiceResult<CommentWithRelations[]>> {
-    try {
-      const result = await this.getComments({
-        isApproved: false,
-        isReported: false,
-        limit,
-        sortBy: 'createdAt',
-        sortOrder: 'asc'
-      });
-
-      return {
-        ...result,
-        data: result.data?.comments || []
-      };
-    } catch (error) {
-      console.error('Error getting pending comments:', error);
-      return {
-        success: false,
-        message: 'Failed to retrieve pending comments',
         errors: [error instanceof Error ? error.message : 'Unknown error']
       };
     }

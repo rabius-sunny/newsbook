@@ -225,8 +225,6 @@ async function seed() {
       (c: any) => c.slug === 'international'
     );
 
-    const adminUser = userData.find((u: any) => u.role === 'admin');
-    const editorUser = userData.find((u: any) => u.role === 'editor');
     const politicsReporter = userData.find(
       (u: any) => u.name === 'Rashid Ahmed'
     );
@@ -245,7 +243,6 @@ async function seed() {
             'ব্যাপক অর্থনৈতিক পুনরুদ্ধার পরিকল্পনা আলোচনার জন্য সংসদের বিশেষ অধিবেশন বসতে যাচ্ছে। এই পরিকল্পনায় কর্মসংস্থান সৃষ্টি, অবকাঠামো উন্নয়ন এবং সাম্প্রতিক বৈশ্বিক অর্থনৈতিক চ্যালেঞ্জে ক্ষতিগ্রস্ত ছোট ব্যবসার সহায়তার ব্যবস্থা রয়েছে।',
           categoryId: politicsCategory?.id,
           authorId: politicsReporter?.id,
-          editorId: editorUser?.id,
           status: 'published',
           isPublished: true,
           publishedAt: new Date(),
@@ -256,9 +253,7 @@ async function seed() {
             'https://images.unsplash.com/photo-1555848962-6e79363bfa19?w=800',
 
           imageCaption: 'ঢাকার জাতীয় সংসদ ভবন',
-          viewCount: 1250,
-          likeCount: 89,
-          shareCount: 34
+          viewCount: 1250
         },
         {
           title: 'অস্ট্রেলিয়ার বিপক্ষে জয় পেল বাংলাদেশ ক্রিকেট দল',
@@ -269,20 +264,16 @@ async function seed() {
             'শেরে বাংলা জাতীয় স্টেডিয়ামে রোমাঞ্চকর টি-২০ ম্যাচে বাংলাদেশ অস্ট্রেলিয়াকে ৭ উইকেটে পরাজিত করেছে। অসাধারণ অল রাউন্ড পারফরম্যান্সের জন্য ম্যান অব দ্য ম্যাচ পুরস্কার পেয়েছেন শাকিব আল হাসান।',
           categoryId: sportsCategory?.id,
           authorId: sportsReporter?.id,
-          editorId: editorUser?.id,
           status: 'published',
           isPublished: true,
           publishedAt: new Date(Date.now() - 86400000), // 1 day ago
           isBreaking: true,
           priority: 9,
-          location: 'Dhaka',
-          locationBn: 'ঢাকা',
+          location: 'ঢাকা',
           featuredImage:
             'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800',
           imageCaption: 'জয়ের উল্লাসে বাংলাদেশ ক্রিকেট দল',
-          viewCount: 2340,
-          likeCount: 156,
-          shareCount: 78
+          viewCount: 2340
         },
         {
           title: 'ইউরোপীয় ইউনিয়নের সাথে নতুন বাণিজ্য চুক্তি',
@@ -293,20 +284,16 @@ async function seed() {
             'সরকার ইউরোপীয় ইউনিয়নের সাথে একটি ঐতিহাসিক বাণিজ্য চুক্তি স্বাক্ষর করেছে যা রপ্তানি বৃদ্ধি করবে এবং বাংলাদেশি ব্যবসার জন্য নতুন সুযোগ সৃষ্টি করবে। এই চুক্তিতে টেক্সটাইল, ফার্মাসিউটিক্যালস এবং প্রযুক্তি খাত অন্তর্ভুক্ত রয়েছে।',
           categoryId: economyCategory?.id,
           authorId: intlReporter?.id,
-          editorId: editorUser?.id,
           status: 'published',
           isPublished: true,
           publishedAt: new Date(Date.now() - 172800000), // 2 days ago
           isFeatured: true,
           priority: 7,
-          location: 'Brussels',
-          locationBn: 'ব্রাসেলস',
+          location: 'ব্রাসেলস',
           featuredImage:
             'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800',
           imageCaption: 'বাণিজ্য প্রতিনিধিদলের বৈঠক',
-          viewCount: 1890,
-          likeCount: 98,
-          shareCount: 45
+          viewCount: 1890
         },
         {
           title: 'জলবায়ু পরিবর্তন সম্মেলনের ফলাফল',
@@ -317,19 +304,15 @@ async function seed() {
             'সাম্প্রতিক আন্তর্জাতিক জলবায়ু সম্মেলন উন্নয়নশীল দেশগুলির জন্য গুরুত্বপূর্ণ অঙ্গীকার নিয়ে শেষ হয়েছে। বাংলাদেশ জলবায়ু অভিযোজন প্রকল্প এবং নবায়নযোগ্য শক্তি উদ্যোগের জন্য উল্লেখযোগ্য অর্থায়ন নিশ্চিত করেছে।',
           categoryId: internationalCategory?.id,
           authorId: intlReporter?.id,
-          editorId: editorUser?.id,
           status: 'published',
           isPublished: true,
           publishedAt: new Date(Date.now() - 259200000), // 3 days ago
           priority: 6,
-          location: 'Geneva',
-          locationBn: 'জেনেভা',
+          location: 'জেনেভা',
           featuredImage:
             'https://images.unsplash.com/photo-1569163139302-de44fdc5c72c?w=800',
           imageCaption: 'জলবায়ু সম্মেলনের প্রতিনিধিগণ',
-          viewCount: 987,
-          likeCount: 67,
-          shareCount: 23
+          viewCount: 987
         }
       ])
       .returning();
@@ -373,26 +356,20 @@ async function seed() {
         authorName: 'রহিম উদ্দিন',
         authorEmail: 'rahim@example.com',
         content:
-          'বাংলাদেশের জন্য দুর্দান্ত জয়! আমাদের সবার জন্য গর্বের মুহূর্ত।',
-        isApproved: true,
-        likeCount: 15
+          'বাংলাদেশের জন্য দুর্দান্ত জয়! আমাদের সবার জন্য গর্বের মুহূর্ত।'
       },
       {
         articleId: articleData[1].id, // Cricket article
         authorName: 'সালমা খান',
         authorEmail: 'salma@example.com',
-        content: 'শাকিব অসাধারণ খেলেছেন। সত্যিই ম্যান অব দ্য ম্যাচ!',
-        isApproved: true,
-        likeCount: 8
+        content: 'শাকিব অসাধারণ খেলেছেন। সত্যিই ম্যান অব দ্য ম্যাচ!'
       },
       {
         articleId: articleData[0].id, // Parliament article
         authorName: 'আহমেদ হাসান',
         authorEmail: 'ahmed@example.com',
         content:
-          'আশা করি এই অর্থনৈতিক পরিকল্পনা সাধারণ মানুষের জন্য ইতিবাচক পরিবর্তন আনবে।',
-        isApproved: true,
-        likeCount: 12
+          'আশা করি এই অর্থনৈতিক পরিকল্পনা সাধারণ মানুষের জন্য ইতিবাচক পরিবর্তন আনবে।'
       }
     ]);
 

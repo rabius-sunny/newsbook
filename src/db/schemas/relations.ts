@@ -18,8 +18,7 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articles),
-  editedArticles: many(articles),
-  moderatedComments: many(comments)
+  editedArticles: many(articles)
 }));
 
 export const tagsRelations = relations(tags, ({ many }) => ({
@@ -35,11 +34,6 @@ export const articlesRelations = relations(articles, ({ one, many }) => ({
     fields: [articles.authorId],
     references: [users.id],
     relationName: 'ArticleAuthor'
-  }),
-  editor: one(users, {
-    fields: [articles.editorId],
-    references: [users.id],
-    relationName: 'ArticleEditor'
   }),
   tags: many(articleTags),
   comments: many(comments),
@@ -57,22 +51,10 @@ export const articleTagsRelations = relations(articleTags, ({ one }) => ({
   })
 }));
 
-export const commentsRelations = relations(comments, ({ one, many }) => ({
+export const commentsRelations = relations(comments, ({ one }) => ({
   article: one(articles, {
     fields: [comments.articleId],
     references: [articles.id]
-  }),
-  parent: one(comments, {
-    fields: [comments.parentId],
-    references: [comments.id],
-    relationName: 'CommentReplies'
-  }),
-  replies: many(comments, {
-    relationName: 'CommentReplies'
-  }),
-  moderator: one(users, {
-    fields: [comments.moderatedBy],
-    references: [users.id]
   })
 }));
 
