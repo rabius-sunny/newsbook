@@ -1,6 +1,6 @@
 import { eq, desc, asc, like, and, count } from 'drizzle-orm';
 import { db } from '../db/index';
-import { tags, articleTags } from '../db/schema';
+import { tags, articleTags } from '../db/schemas';
 import {
   ServiceResult,
   Tag,
@@ -39,12 +39,7 @@ export class TagService {
       }
 
       // Apply sorting
-      const orderColumn =
-        sortBy === 'nameBn'
-          ? tags.nameBn
-          : sortBy === 'createdAt'
-          ? tags.createdAt
-          : tags.name;
+      const orderColumn = sortBy === 'createdAt' ? tags.createdAt : tags.name;
 
       const orderDirection =
         sortOrder === 'asc' ? asc(orderColumn) : desc(orderColumn);
@@ -54,10 +49,7 @@ export class TagService {
         .select({
           id: tags.id,
           name: tags.name,
-          nameBn: tags.nameBn,
           slug: tags.slug,
-          description: tags.description,
-          color: tags.color,
           isActive: tags.isActive,
           createdAt: tags.createdAt,
           articleCount: count(articleTags.articleId)
@@ -108,10 +100,7 @@ export class TagService {
         .select({
           id: tags.id,
           name: tags.name,
-          nameBn: tags.nameBn,
           slug: tags.slug,
-          description: tags.description,
-          color: tags.color,
           isActive: tags.isActive,
           createdAt: tags.createdAt,
           articleCount: count(articleTags.articleId)
@@ -167,7 +156,7 @@ export class TagService {
 
   // Update tag
   async updateTag(
-    id: string,
+    id: number,
     data: Partial<CreateTag>
   ): Promise<ServiceResult<Tag>> {
     try {
@@ -201,7 +190,7 @@ export class TagService {
   }
 
   // Delete tag
-  async deleteTag(id: string): Promise<ServiceResult<void>> {
+  async deleteTag(id: number): Promise<ServiceResult<void>> {
     try {
       // Check if tag has articles
       const [articleCount] = await db
@@ -253,10 +242,7 @@ export class TagService {
         .select({
           id: tags.id,
           name: tags.name,
-          nameBn: tags.nameBn,
           slug: tags.slug,
-          description: tags.description,
-          color: tags.color,
           isActive: tags.isActive,
           createdAt: tags.createdAt,
           articleCount: count(articleTags.articleId)

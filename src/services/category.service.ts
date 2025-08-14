@@ -1,6 +1,6 @@
 import { eq, desc, asc, count, sql } from 'drizzle-orm';
 import { db } from '../db/index';
-import { categories, articles } from '../db/schema';
+import { categories, articles } from '../db/schemas';
 import {
   ServiceResult,
   Category,
@@ -20,7 +20,7 @@ export class CategoryService {
         .orderBy(asc(categories.displayOrder), asc(categories.name));
 
       // Build hierarchy
-      const categoryMap = new Map<string, CategoryWithParent>();
+      const categoryMap = new Map<number, CategoryWithParent>();
       const rootCategories: CategoryWithParent[] = [];
 
       // First pass: create all categories
@@ -68,7 +68,6 @@ export class CategoryService {
         .select({
           id: categories.id,
           name: categories.name,
-          nameEn: categories.nameEn,
           slug: categories.slug,
           description: categories.description,
           parentId: categories.parentId,
@@ -182,7 +181,7 @@ export class CategoryService {
 
   // Update category
   async updateCategory(
-    id: string,
+    id: number,
     data: Partial<CreateCategory>
   ): Promise<ServiceResult<Category>> {
     try {
@@ -216,7 +215,7 @@ export class CategoryService {
   }
 
   // Delete category
-  async deleteCategory(id: string): Promise<ServiceResult<void>> {
+  async deleteCategory(id: number): Promise<ServiceResult<void>> {
     try {
       // Check if category has articles
       const [articleCount] = await db
@@ -282,7 +281,6 @@ export class CategoryService {
         .select({
           id: categories.id,
           name: categories.name,
-          nameEn: categories.nameEn,
           slug: categories.slug,
           description: categories.description,
           parentId: categories.parentId,

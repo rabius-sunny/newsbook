@@ -9,13 +9,15 @@ export class ArticleController {
   async getArticles(c: Context) {
     try {
       const query = c.req.query();
-      const params: SearchParams & ArticleFilters = {
-        page: query.page ? parseInt(query.page) : 1,
-        limit: query.limit ? parseInt(query.limit) : 10,
-        query: query.q || query.query,
-        categoryId: query.category,
-        authorId: query.author,
-        status: query.status,
+      const filters: SearchParams & ArticleFilters = {
+        page: parseInt(query.page as string) || 1,
+        limit: parseInt(query.limit as string) || 20,
+        query: query.q as string,
+        categoryId: query.category
+          ? parseInt(query.category as string)
+          : undefined,
+        authorId: query.author ? parseInt(query.author as string) : undefined,
+        status: query.status as string,
         isPublished:
           query.published === 'true'
             ? true
@@ -34,14 +36,11 @@ export class ArticleController {
             : query.breaking === 'false'
             ? false
             : undefined,
-        sortBy: query.sortBy || 'publishedAt',
-        sortOrder: (query.sortOrder as 'asc' | 'desc') || 'desc',
-        dateFrom: query.dateFrom,
-        dateTo: query.dateTo,
-        tags: query.tags ? query.tags.split(',') : undefined
+        sortBy: (query.sortBy as string) || 'publishedAt',
+        sortOrder: (query.sortOrder as 'asc' | 'desc') || 'desc'
       };
 
-      const result = await articleService.getArticles(params);
+      const result = await articleService.getArticles(filters);
 
       const response: ApiResponse = {
         success: result.success,
@@ -125,7 +124,7 @@ export class ArticleController {
   // PUT /api/articles/:id
   async updateArticle(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const body = await c.req.json();
       const result = await articleService.updateArticle(id, body);
 
@@ -150,7 +149,7 @@ export class ArticleController {
   // DELETE /api/articles/:id
   async deleteArticle(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const result = await articleService.deleteArticle(id);
 
       const response: ApiResponse = {

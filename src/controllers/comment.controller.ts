@@ -12,7 +12,7 @@ export class CommentController {
       const params: SearchParams & CommentFilters = {
         page: query.page ? parseInt(query.page) : 1,
         limit: query.limit ? parseInt(query.limit) : 20,
-        articleId: query.articleId,
+        articleId: query.articleId ? parseInt(query.articleId) : undefined,
         isApproved:
           query.approved === 'true'
             ? true
@@ -60,7 +60,7 @@ export class CommentController {
   // GET /api/articles/:articleId/comments
   async getArticleComments(c: Context) {
     try {
-      const articleId = c.req.param('articleId');
+      const articleId = parseInt(c.req.param('articleId'));
       const page = c.req.query('page') ? parseInt(c.req.query('page')!) : 1;
       const limit = c.req.query('limit') ? parseInt(c.req.query('limit')!) : 20;
 
@@ -134,7 +134,7 @@ export class CommentController {
   // PUT /api/comments/:id
   async updateComment(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const body = await c.req.json();
       const result = await commentService.updateComment(id, body);
 
@@ -159,7 +159,7 @@ export class CommentController {
   // DELETE /api/comments/:id
   async deleteComment(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const result = await commentService.deleteComment(id);
 
       const response: ApiResponse = {
@@ -182,7 +182,7 @@ export class CommentController {
   // POST /api/comments/:id/moderate
   async moderateComment(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const { action, moderatorId } = await c.req.json();
 
       if (!['approve', 'reject'].includes(action)) {
@@ -221,7 +221,7 @@ export class CommentController {
   // POST /api/comments/:id/report
   async reportComment(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const result = await commentService.reportComment(id);
 
       const response: ApiResponse = {

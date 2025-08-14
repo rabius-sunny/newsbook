@@ -1,6 +1,6 @@
 import { eq, desc, asc, like, and, count } from 'drizzle-orm';
 import { db } from '../db/index';
-import { users, articles } from '../db/schema';
+import { users, articles } from '../db/schemas';
 import {
   ServiceResult,
   User,
@@ -68,9 +68,7 @@ export class UserService {
           id: users.id,
           email: users.email,
           name: users.name,
-          nameBn: users.nameBn,
           bio: users.bio,
-          bioBn: users.bioBn,
           avatar: users.avatar,
           role: users.role,
           isActive: users.isActive,
@@ -121,16 +119,14 @@ export class UserService {
   }
 
   // Get single user by ID
-  async getUserById(id: string): Promise<ServiceResult<UserPublic>> {
+  async getUserById(id: number): Promise<ServiceResult<UserPublic>> {
     try {
       const [user] = await db
         .select({
           id: users.id,
           email: users.email,
           name: users.name,
-          nameBn: users.nameBn,
           bio: users.bio,
-          bioBn: users.bioBn,
           avatar: users.avatar,
           role: users.role,
           createdAt: users.createdAt
@@ -201,9 +197,7 @@ export class UserService {
         id: users.id,
         email: users.email,
         name: users.name,
-        nameBn: users.nameBn,
         bio: users.bio,
-        bioBn: users.bioBn,
         avatar: users.avatar,
         role: users.role,
         createdAt: users.createdAt
@@ -226,7 +220,7 @@ export class UserService {
 
   // Update user
   async updateUser(
-    id: string,
+    id: number,
     data: Partial<CreateUser>
   ): Promise<ServiceResult<UserPublic>> {
     try {
@@ -238,9 +232,7 @@ export class UserService {
           id: users.id,
           email: users.email,
           name: users.name,
-          nameBn: users.nameBn,
           bio: users.bio,
-          bioBn: users.bioBn,
           avatar: users.avatar,
           role: users.role,
           createdAt: users.createdAt
@@ -270,7 +262,7 @@ export class UserService {
   }
 
   // Delete user
-  async deleteUser(id: string): Promise<ServiceResult<void>> {
+  async deleteUser(id: number): Promise<ServiceResult<void>> {
     try {
       // Check if user has articles
       const [articleCount] = await db
@@ -314,7 +306,7 @@ export class UserService {
   }
 
   // Get user profile with statistics
-  async getUserProfile(id: string): Promise<
+  async getUserProfile(id: number): Promise<
     ServiceResult<
       UserPublic & {
         stats: {
@@ -369,7 +361,7 @@ export class UserService {
   }
 
   // Update last login
-  async updateLastLogin(id: string): Promise<ServiceResult<void>> {
+  async updateLastLogin(id: number): Promise<ServiceResult<void>> {
     try {
       await db
         .update(users)
@@ -398,9 +390,7 @@ export class UserService {
           id: users.id,
           email: users.email,
           name: users.name,
-          nameBn: users.nameBn,
           bio: users.bio,
-          bioBn: users.bioBn,
           avatar: users.avatar,
           role: users.role,
           createdAt: users.createdAt

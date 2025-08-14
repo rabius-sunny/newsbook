@@ -19,7 +19,7 @@ import {
   articleTags,
   comments,
   pageViews
-} from '../db/schema';
+} from '../db/schemas';
 import {
   ServiceResult,
   ArticleWithRelations,
@@ -67,19 +67,19 @@ export class ArticleService {
         conditions.push(
           or(
             like(articles.title, `%${query}%`),
-            like(articles.titleBn, `%${query}%`),
-            like(articles.content, `%${query}%`),
-            like(articles.contentBn, `%${query}%`)
+            like(articles.content, `%${query}%`)
           )
         );
       }
 
       if (categoryId) {
-        conditions.push(eq(articles.categoryId, categoryId));
+        conditions.push(
+          eq(articles.categoryId, parseInt(categoryId.toString()))
+        );
       }
 
       if (authorId) {
-        conditions.push(eq(articles.authorId, authorId));
+        conditions.push(eq(articles.authorId, parseInt(authorId.toString())));
       }
 
       if (status) {
@@ -111,13 +111,10 @@ export class ArticleService {
         .select({
           id: articles.id,
           title: articles.title,
-          titleBn: articles.titleBn,
           slug: articles.slug,
           excerpt: articles.excerpt,
-          excerptBn: articles.excerptBn,
           featuredImage: articles.featuredImage,
           imageCaption: articles.imageCaption,
-          imageCaptionBn: articles.imageCaptionBn,
           isPublished: articles.isPublished,
           publishedAt: articles.publishedAt,
           isFeatured: articles.isFeatured,
@@ -135,12 +132,10 @@ export class ArticleService {
           // Category
           categoryId: categories.id,
           categoryName: categories.name,
-          categoryNameBn: categories.nameEn,
           categorySlug: categories.slug,
           // Author
           authorId: users.id,
           authorName: users.name,
-          authorNameBn: users.nameBn,
           authorAvatar: users.avatar
         })
         .from(articles)
@@ -216,9 +211,7 @@ export class ArticleService {
                 articleId: articleTags.articleId,
                 tagId: tags.id,
                 tagName: tags.name,
-                tagNameBn: tags.nameBn,
-                tagSlug: tags.slug,
-                tagColor: tags.color
+                tagSlug: tags.slug
               })
               .from(articleTags)
               .leftJoin(tags, eq(articleTags.tagId, tags.id))
@@ -230,13 +223,10 @@ export class ArticleService {
         (article) => ({
           id: article.id,
           title: article.title,
-          titleBn: article.titleBn,
           slug: article.slug,
           excerpt: article.excerpt,
-          excerptBn: article.excerptBn,
           featuredImage: article.featuredImage,
           imageCaption: article.imageCaption,
-          imageCaptionBn: article.imageCaptionBn,
           isPublished: article.isPublished,
           publishedAt: article.publishedAt,
           isFeatured: article.isFeatured,
@@ -255,7 +245,6 @@ export class ArticleService {
             ? {
                 id: article.categoryId,
                 name: article.categoryName || '',
-                nameBn: article.categoryNameBn || '',
                 slug: article.categorySlug || ''
               }
             : null,
@@ -263,18 +252,15 @@ export class ArticleService {
             ? {
                 id: article.authorId,
                 name: article.authorName || '',
-                nameBn: article.authorNameBn || null,
                 avatar: article.authorAvatar || null
               }
             : null,
           tags: articleTagsData
             .filter((tag) => tag.articleId === article.id)
             .map((tag) => ({
-              id: tag.tagId || '',
+              id: tag.tagId || 0,
               name: tag.tagName || '',
-              nameBn: tag.tagNameBn || '',
-              slug: tag.tagSlug || '',
-              color: tag.tagColor || '#3B82F6'
+              slug: tag.tagSlug || ''
             }))
         })
       );
@@ -336,9 +322,7 @@ export class ArticleService {
               id: users.id,
               email: users.email,
               name: users.name,
-              nameBn: users.nameBn,
               bio: users.bio,
-              bioBn: users.bioBn,
               avatar: users.avatar,
               role: users.role,
               createdAt: users.createdAt
@@ -354,9 +338,7 @@ export class ArticleService {
               id: users.id,
               email: users.email,
               name: users.name,
-              nameBn: users.nameBn,
               bio: users.bio,
-              bioBn: users.bioBn,
               avatar: users.avatar,
               role: users.role,
               createdAt: users.createdAt
@@ -371,10 +353,7 @@ export class ArticleService {
         .select({
           id: tags.id,
           name: tags.name,
-          nameBn: tags.nameBn,
           slug: tags.slug,
-          description: tags.description,
-          color: tags.color,
           isActive: tags.isActive,
           createdAt: tags.createdAt
         })
@@ -400,10 +379,7 @@ export class ArticleService {
           .map((tag) => ({
             id: tag.id!,
             name: tag.name!,
-            nameBn: tag.nameBn!,
             slug: tag.slug!,
-            description: tag.description || null,
-            color: tag.color || '#3B82F6',
             isActive: tag.isActive || true,
             createdAt: tag.createdAt || null
           })),
@@ -455,7 +431,7 @@ export class ArticleService {
 
   // Update article
   async updateArticle(
-    id: string,
+    id: number,
     data: Partial<CreateArticle>
   ): Promise<ServiceResult<ArticleWithRelations>> {
     try {
@@ -492,7 +468,7 @@ export class ArticleService {
   }
 
   // Delete article
-  async deleteArticle(id: string): Promise<ServiceResult<void>> {
+  async deleteArticle(id: number): Promise<ServiceResult<void>> {
     try {
       const [deletedArticle] = await db
         .delete(articles)
@@ -522,7 +498,7 @@ export class ArticleService {
   }
 
   // Increment view count
-  async incrementViewCount(id: string): Promise<ServiceResult<void>> {
+  async incrementViewCount(id: number): Promise<ServiceResult<void>> {
     try {
       await db
         .update(articles)

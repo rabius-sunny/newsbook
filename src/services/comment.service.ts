@@ -1,6 +1,6 @@
 import { eq, desc, asc, and, count, isNull } from 'drizzle-orm';
 import { db } from '../db/index';
-import { comments, articles, users } from '../db/schema';
+import { comments, articles, users } from '../db/schemas';
 import {
   ServiceResult,
   Comment,
@@ -84,11 +84,9 @@ export class CommentService {
           updatedAt: comments.updatedAt,
           // Article fields
           articleTitle: articles.title,
-          articleTitleBn: articles.titleBn,
           articleSlug: articles.slug,
           // Moderator fields
-          moderatorName: users.name,
-          moderatorNameBn: users.nameBn
+          moderatorName: users.name
         })
         .from(comments)
         .leftJoin(articles, eq(comments.articleId, articles.id))
@@ -138,7 +136,6 @@ export class CommentService {
               ? {
                   id: comment.articleId,
                   title: comment.articleTitle || '',
-                  titleBn: comment.articleTitleBn || '',
                   slug: comment.articleSlug || ''
                 }
               : null,
@@ -147,7 +144,6 @@ export class CommentService {
                   id: comment.moderatedBy,
                   email: '', // Not selected for privacy
                   name: comment.moderatorName || '',
-                  nameBn: comment.moderatorNameBn || null,
                   bio: null,
                   bioBn: null,
                   avatar: null,
@@ -186,7 +182,7 @@ export class CommentService {
 
   // Get comments for an article with threading
   async getArticleComments(
-    articleId: string,
+    articleId: number,
     page: number = 1,
     limit: number = 20
   ): Promise<
@@ -252,7 +248,7 @@ export class CommentService {
           : [];
 
       // Build comment tree
-      const commentMap = new Map<string, CommentWithRelations>();
+      const commentMap = new Map<number, CommentWithRelations>();
 
       // Add parent comments
       parentComments.forEach((comment) => {
@@ -341,7 +337,7 @@ export class CommentService {
 
   // Update comment
   async updateComment(
-    id: string,
+    id: number,
     data: Partial<CreateComment>
   ): Promise<ServiceResult<Comment>> {
     try {
@@ -375,7 +371,7 @@ export class CommentService {
   }
 
   // Delete comment
-  async deleteComment(id: string): Promise<ServiceResult<void>> {
+  async deleteComment(id: number): Promise<ServiceResult<void>> {
     try {
       const [deletedComment] = await db
         .delete(comments)
@@ -406,9 +402,9 @@ export class CommentService {
 
   // Moderate comment (approve/reject)
   async moderateComment(
-    id: string,
+    id: number,
     action: 'approve' | 'reject',
-    moderatorId: string
+    moderatorId: number
   ): Promise<ServiceResult<Comment>> {
     try {
       const [moderatedComment] = await db
@@ -446,7 +442,7 @@ export class CommentService {
   }
 
   // Report comment
-  async reportComment(id: string): Promise<ServiceResult<Comment>> {
+  async reportComment(id: number): Promise<ServiceResult<Comment>> {
     try {
       const [reportedComment] = await db
         .update(comments)

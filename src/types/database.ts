@@ -8,7 +8,7 @@ import {
   newsletters,
   pageViews,
   advertisements
-} from '../db/schema';
+} from '../db/schemas';
 
 // Database table types
 export type Category = typeof categories.$inferSelect;
@@ -43,10 +43,9 @@ export interface CategoryWithArticleCount extends Category {
 }
 
 export interface UserPublic {
-  id: string;
+  id: number;
   email: string;
   name: string;
-  nameBn?: string | null;
   bio?: string | null;
   bioBn?: string | null;
   avatar?: string | null;
@@ -67,15 +66,12 @@ export interface ArticleWithRelations extends Article {
 }
 
 export interface ArticleListItem {
-  id: string;
+  id: number;
   title: string;
-  titleBn: string;
   slug: string;
   excerpt?: string | null;
-  excerptBn?: string | null;
   featuredImage?: string | null;
   imageCaption?: string | null;
-  imageCaptionBn?: string | null;
   isPublished: boolean | null;
   publishedAt: Date | null;
   isFeatured: boolean | null;
@@ -91,23 +87,19 @@ export interface ArticleListItem {
   createdAt: Date | null;
   updatedAt: Date | null;
   category?: {
-    id: string;
+    id: number;
     name: string;
-    nameBn: string;
     slug: string;
   } | null;
   author?: {
-    id: string;
+    id: number;
     name: string;
-    nameBn?: string | null;
     avatar?: string | null;
   } | null;
   tags?: {
-    id: string;
+    id: number;
     name: string;
-    nameBn: string;
     slug: string;
-    color: string | null;
   }[];
 }
 
@@ -118,9 +110,8 @@ export interface CommentWithReplies extends Comment {
 
 export interface CommentWithRelations extends Comment {
   article?: {
-    id: string;
+    id: number;
     title: string;
-    titleBn: string;
     slug: string;
   } | null;
   parent?: Comment | null;
@@ -165,9 +156,8 @@ export interface ArticleStats {
 }
 
 export interface CategoryStats {
-  id: string;
+  id: number;
   name: string;
-  nameBn: string;
   articleCount: number;
   totalViews: number;
   avgViewsPerArticle: number;
@@ -175,9 +165,9 @@ export interface CategoryStats {
 
 // Search and filter types
 export interface ArticleFilters {
-  categoryId?: string;
-  authorId?: string;
-  editorId?: string;
+  categoryId?: number;
+  authorId?: number;
+  editorId?: number;
   status?: string;
   isPublished?: boolean;
   isFeatured?: boolean;
@@ -192,7 +182,7 @@ export interface ArticleFilters {
 }
 
 export interface CommentFilters {
-  articleId?: string;
+  articleId?: number;
   isApproved?: boolean;
   isReported?: boolean;
   authorEmail?: string;
@@ -209,11 +199,11 @@ export interface UserFilters {
 
 // Bulk operations
 export interface BulkUpdateArticles {
-  articleIds: string[];
+  articleIds: number[];
   updates: Partial<Article>;
 }
 
 export interface BulkUpdateComments {
-  commentIds: string[];
+  commentIds: number[];
   updates: Partial<Comment>;
 }

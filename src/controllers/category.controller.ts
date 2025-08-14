@@ -102,7 +102,7 @@ export class CategoryController {
   // PUT /api/categories/:id
   async updateCategory(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const body = await c.req.json();
       const result = await categoryService.updateCategory(id, body);
 
@@ -127,7 +127,7 @@ export class CategoryController {
   // DELETE /api/categories/:id
   async deleteCategory(c: Context) {
     try {
-      const id = c.req.param('id');
+      const id = parseInt(c.req.param('id'));
       const result = await categoryService.deleteCategory(id);
 
       const response: ApiResponse = {
