@@ -7,7 +7,7 @@ export default defineConfig({
   dbCredentials: {
     url:
       process.env.DATABASE_URL ||
-      'postgresql://postgres:postgres@localhost:5432/news_paper_dev'
+      'postgresql://postgres:password@localhost:5433/newspaper'
   },
   verbose: true,
   strict: true

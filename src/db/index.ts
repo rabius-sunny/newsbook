@@ -5,7 +5,7 @@ import * as schema from './schema';
 // Environment variables
 const DATABASE_URL =
   process.env.DATABASE_URL ||
-  'postgresql://postgres:postgres@localhost:5432/news_paper_dev';
+  'postgresql://postgres:password@localhost:5433/newspaper';
 
 // Production-optimized connection options
 const connectionOptions = {
