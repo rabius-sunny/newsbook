@@ -1,8 +1,9 @@
+import { cn } from '@/lib/utils'
 import CustomLink from '../common/CustomLink'
 
 export default function Footer() {
  return (
-  <footer className='bg-gray-800 mt-12 py-8 text-white'>
+  <footer className={cn({ sectionVariants: 'bg-gray-800 text-white py-12' })}>
    <div className='mx-auto px-4 container'>
     <div className='gap-6 grid grid-cols-1 md:grid-cols-4'>
      <div>
