@@ -47,3 +47,49 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+
+# ================================
+# View Repository Git Ignore
+# ================================
+
+# Dependencies
+/src/view/node_modules
+/src/view/.pnp
+/src/view/.pnp.*
+/src/view/.yarn/*
+!/src/view/.yarn/patches
+!/src/view/.yarn/plugins
+!/src/view/.yarn/releases
+!/src/view/.yarn/versions
+
+# Testing
+/src/view/coverage
+
+# Next.js build output
+/src/view/.next
+/src/view/out
+
+# Production build
+/src/view/build
+
+# Misc
+/src/view/.DS_Store
+/src/view/*.pem
+
+# Debug logs
+/src/view/npm-debug.log*
+/src/view/yarn-debug.log*
+/src/view/yarn-error.log*
+/src/view/.pnpm-debug.log*
+
+# Env files (opt-in if needed)
+/src/view/.env*
+!.env.example
+
+# Vercel deployment
+/src/view/.vercel
+
+# TypeScript
+/src/view/*.tsbuildinfo
+/src/view/next-env.d.ts
