@@ -1,9 +1,9 @@
-import Header from '@/components/layout/header'
 import NewsCard from '@/components/common/news-card'
-import SidebarNews from '@/components/layout/sidebar-news'
-import SectionHeader from '@/components/layout/section-header'
+import Footer from '@/components/frontend/layout/footer'
+import Header from '@/components/frontend/layout/header'
+import SectionHeader from '@/components/frontend/layout/section-header'
+import SidebarNews from '@/components/frontend/layout/sidebar-news'
 import { newsData } from '@/config/data'
-import Footer from '@/components/layout/footer'
 
 export default function HomePage() {
  return (

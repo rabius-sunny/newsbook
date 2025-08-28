@@ -1,5 +1,5 @@
+import CustomLink from '@/components/common/CustomLink'
 import { cn } from '@/lib/utils'
-import CustomLink from '../common/CustomLink'
 
 export default function Footer() {
  return (
