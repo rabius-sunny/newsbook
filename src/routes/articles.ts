@@ -1,19 +1,17 @@
 import { Hono } from 'hono';
-import { ArticleController } from '../controllers/article.controller';
+import * as articleHandlers from '../controllers/article.controller';
+import * as commentHandlers from '../controllers/comment.controller';
 
-const articleController = new ArticleController();
 const app = new Hono();
 
 // Article routes
-app.get('/', articleController.getArticles.bind(articleController));
-app.get(
-  '/featured',
-  articleController.getFeaturedArticles.bind(articleController)
-);
-app.get('/breaking', articleController.getBreakingNews.bind(articleController));
-app.get('/:slug', articleController.getArticleBySlug.bind(articleController));
-app.post('/', articleController.createArticle.bind(articleController));
-app.put('/:id', articleController.updateArticle.bind(articleController));
-app.delete('/:id', articleController.deleteArticle.bind(articleController));
+app.get('/', articleHandlers.getArticles);
+app.get('/featured', articleHandlers.getFeaturedArticles);
+app.get('/breaking', articleHandlers.getBreakingNews);
+app.get('/:articleId/comments', commentHandlers.getArticleComments);
+app.get('/:slug', articleHandlers.getArticleBySlug);
+app.post('/', articleHandlers.createArticle);
+app.put('/:id', articleHandlers.updateArticle);
+app.delete('/:id', articleHandlers.deleteArticle);
 
 export { app as articleRoutes };

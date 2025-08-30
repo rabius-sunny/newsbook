@@ -4,29 +4,6 @@ export type CreateSlug = (input: string) => string;
 export type GenerateId = () => string;
 export type FormatDate = (d: Date) => string;
 
-export interface ValidationRule {
-  field: string;
-  validate?: (value: any) => boolean;
-  message?: string;
-  required?: boolean;
-  type?:
-    | 'string'
-    | 'number'
-    | 'boolean'
-    | 'array'
-    | 'object'
-    | 'email'
-    | 'uuid';
-  minLength?: number;
-  maxLength?: number;
-  pattern?: RegExp;
-}
-
-export interface ValidationError {
-  field: string;
-  message: string;
-}
-
 export interface AppConfig {
   database?: {
     host?: string;

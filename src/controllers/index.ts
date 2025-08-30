@@ -1,4 +1,3 @@
-// Export all controllers
-export { ArticleController } from './article.controller';
-export { CategoryController } from './category.controller';
-export { CommentController } from './comment.controller';
+export * from './article.controller';
+export * from './category.controller';
+export * from './comment.controller';
