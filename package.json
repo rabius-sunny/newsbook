@@ -1,9 +1,9 @@
 {
   "name": "news-paper",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "build": "bun build src/index.ts --outdir ./dist --target bun",
-    "start": "bun run dist/index.js",
+    "dev:backend": "bun run --hot src/index.ts",
+    "build:backend": "bun build src/index.ts --outdir ./dist --target bun",
+    "start:backend": "bun run dist/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun run src/db/migrate.ts",
     "db:studio": "drizzle-kit studio",
@@ -16,7 +16,10 @@
     "docker:logs:prod": "docker compose -f docker-compose.prod.yml logs -f",
     "db:reset": "bun run docker:down && bun run docker:dev",
     "test:api": "curl -f http://localhost:3000/health",
-    "check": "bunx tsc --noEmit --skipLibCheck"
+    "check": "bunx tsc --noEmit --skipLibCheck",
+    "dev": "cd src/view && bun run dev",
+    "build": "cd src/view && bun run build",
+    "start": "cd src/view && bun run start"
   },
   "dependencies": {
     "drizzle-orm": "^0.44.5",
